@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🛡️ Кибербезопасность для своих</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-1:#0f0c29; --bg-2:#302b63; --bg-3:#24243e;
+  --card-bg:#fff; --text-main:#0f0c29; --text-soft:#666; --text-mid:#302b63;
+  --input-bg:#f8faff; --input-border:#e0e6ed;
+  --question-bg-1:#f8faff; --question-bg-2:#eef2ff;
+  --explanation-bg-1:#fff9e6; --explanation-bg-2:#fff3cd;
+  --memo-bg-1:#f8faff; --memo-bg-2:#eef2ff;
+}
+[data-theme="dark"] {
+  --bg-1:#050510; --bg-2:#0f0c29; --bg-3:#1a1a2e;
+  --card-bg:#1a1a2e; --text-main:#fff; --text-soft:#b0b0c0; --text-mid:#e0e0f0;
+  --input-bg:#232340; --input-border:#3a3a5c;
+  --question-bg-1:#232340; --question-bg-2:#2a2a4a;
+  --explanation-bg-1:#3a3020; --explanation-bg-2:#4a3a20;
+  --memo-bg-1:#232340; --memo-bg-2:#2a2a4a;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'Montserrat','Segoe UI',Tahoma,sans-serif;
+  background:linear-gradient(135deg,var(--bg-1) 0%,var(--bg-2) 50%,var(--bg-3) 100%);
+  min-height:100vh; display:flex; justify-content:center; align-items:center;
+  padding:20px; overflow-x:hidden; position:relative; transition:background .5s ease;
+}
+.bg-bubbles { position:fixed; top:0; left:0; width:100%; height:100%; overflow:hidden; z-index:0; pointer-events:none; }
+.bg-bubbles span { position:absolute; display:block; width:40px; height:40px; background:rgba(0,212,255,.15); border-radius:50%; animation:float 25s infinite; }
+.bg-bubbles span:nth-child(1){left:10%;animation-delay:0s;width:80px;height:80px;}
+.bg-bubbles span:nth-child(2){left:25%;animation-delay:4s;width:30px;height:30px;}
+.bg-bubbles span:nth-child(3){left:40%;animation-delay:8s;width:60px;height:60px;background:rgba(123,47,247,.15);}
+.bg-bubbles span:nth-child(4){left:55%;animation-delay:2s;width:50px;height:50px;}
+.bg-bubbles span:nth-child(5){left:70%;animation-delay:6s;width:90px;height:90px;background:rgba(123,47,247,.12);}
+.bg-bubbles span:nth-child(6){left:85%;animation-delay:10s;width:35px;height:35px;}
+.bg-bubbles span:nth-child(7){left:15%;animation-delay:12s;width:55px;height:55px;}
+.bg-bubbles span:nth-child(8){left:65%;animation-delay:14s;width:45px;height:45px;background:rgba(0,212,255,.2);}
+.bg-bubbles span:nth-child(9){left:90%;animation-delay:3s;width:70px;height:70px;}
+.bg-bubbles span:nth-child(10){left:5%;animation-delay:9s;width:40px;height:40px;background:rgba(123,47,247,.18);}
+@keyframes float {
+  0%{transform:translateY(100vh) rotate(0);opacity:0;}
+  10%{opacity:1;} 90%{opacity:1;}
+  100%{transform:translateY(-100px) rotate(720deg);opacity:0;}
+}
+.theme-toggle {
+  position:fixed; top:20px; right:20px; width:50px; height:50px; border-radius:50%;
+  border:none; background:rgba(255,255,255,.95); font-size:22px; cursor:pointer;
+  box-shadow:0 6px 20px rgba(0,0,0,.3); z-index:100; transition:all .3s ease;
+  display:flex; align-items:center; justify-content:center;
+}
+.theme-toggle:hover { transform:rotate(20deg) scale(1.1); }
+[data-theme="dark"] .theme-toggle { background:rgba(40,40,70,.95); }
+.container {
+  max-width:820px; width:100%; background:var(--card-bg); border-radius:28px;
+  box-shadow:0 30px 80px rgba(0,0,0,.5); overflow:hidden; position:relative;
+  z-index:1; transition:background .5s ease;
+}
+.screen { display:none; padding:45px 40px; animation:fadeIn .6s ease; }
+.screen.active { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+.hero { text-align:center; margin-bottom:35px; }
+.shield-animation { width:100px; height:120px; margin:0 auto 15px; animation:shieldPulse 3s ease-in-out infinite; filter:drop-shadow(0 10px 25px rgba(0,212,255,.4)); }
+.shield-animation svg { width:100%; height:100%; }
+@keyframes shieldPulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.08);} }
+h1 { color:var(--text-main); font-size:32px; font-weight:900; line-height:1.2; margin-bottom:12px; letter-spacing:-.5px; transition:color .5s ease; }
+.gradient-text { background:linear-gradient(135deg,#00d4ff 0%,#7b2ff7 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.subtitle { color:var(--text-soft); font-size:16px; line-height:1.5; max-width:500px; margin:0 auto; transition:color .5s ease; }
+.categories h2 { font-size:18px; color:var(--text-mid); margin-bottom:18px; font-weight:700; transition:color .5s ease; }
+.category-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:30px; }
+.category-btn {
+  display:flex; flex-direction:column; align-items:flex-start; padding:18px 20px;
+  border:none; border-radius:16px; color:#fff; cursor:pointer; text-align:left;
+  font-family:inherit; transition:all .3s cubic-bezier(.4,0,.2,1); position:relative;
+  overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,.15);
+}
+.category-btn::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent); transition:left .5s; }
+.category-btn:hover::before { left:100%; }
+.category-btn:hover { transform:translateY(-4px) scale(1.02); box-shadow:0 12px 30px rgba(0,0,0,.25); }
+.cat-all{background:linear-gradient(135deg,#667eea,#764ba2);grid-column:span 2;}
+.cat-phishing{background:linear-gradient(135deg,#f093fb,#f5576c);}
+.cat-passwords{background:linear-gradient(135deg,#4facfe,#00f2fe);}
+.cat-social{background:linear-gradient(135deg,#43e97b,#38f9d7);}
+.cat-basics{background:linear-gradient(135deg,#fa709a,#fee140);}
+.cat-icon{font-size:28px;margin-bottom:8px;}
+.cat-name{font-size:16px;font-weight:700;margin-bottom:2px;}
+.cat-count{font-size:12px;opacity:.85;font-weight:500;}
+.info-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.info-card { background:linear-gradient(135deg,var(--question-bg-1),var(--question-bg-2)); padding:15px 12px; border-radius:14px; text-align:center; font-size:13px; color:var(--text-soft); font-weight:600; border:1px solid var(--input-border); transition:all .5s ease; }
+.info-icon { display:block; font-size:22px; margin-bottom:6px; }
+.quiz-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; }
+.progress-info { font-size:15px; color:var(--text-soft); font-weight:700; transition:color .5s ease; }
+.timer-box { background:linear-gradient(135deg,var(--bg-1),var(--bg-2)); color:#fff; padding:9px 18px; border-radius:22px; font-size:15px; font-weight:700; display:flex; align-items:center; gap:5px; transition:all .3s; box-shadow:0 4px 12px rgba(15,12,41,.3); }
+.timer-box.warning { background:linear-gradient(135deg,#f5576c,#dc3545); animation:pulse .6s infinite; }
+.timer-icon{font-size:14px;} .timer-label{font-size:12px;opacity:.85;}
+@keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.06);} }
+.progress-bar { height:10px; background:var(--input-border); border-radius:5px; margin-bottom:25px; overflow:hidden; transition:background .5s ease; }
+.progress-fill { height:100%; background:linear-gradient(90deg,#00d4ff,#7b2ff7); border-radius:5px; transition:width .5s ease; width:0%; box-shadow:0 0 15px rgba(0,212,255,.5); }
+.question-card { background:linear-gradient(135deg,var(--question-bg-1),var(--question-bg-2)); padding:25px; border-radius:18px; margin-bottom:22px; border-left:5px solid #7b2ff7; transition:background .5s ease; }
+.question-text { font-size:19px; color:var(--text-main); font-weight:700; line-height:1.5; transition:color .5s ease; }
+.options { display:flex; flex-direction:column; gap:12px; }
+.option-btn { display:block; width:100%; padding:17px 22px; background:var(--input-bg); border:2px solid var(--input-border); border-radius:14px; font-size:15.5px; font-weight:600; color:var(--text-mid); text-align:left; cursor:pointer; transition:all .25s ease; font-family:inherit; line-height:1.4; position:relative; }
+.option-btn:hover:not(:disabled) { background:var(--question-bg-2); border-color:#7b2ff7; transform:translateX(6px); box-shadow:0 6px 20px rgba(123,47,247,.15); }
+.option-btn:disabled { cursor:default; }
+.option-btn.correct { background:linear-gradient(135deg,#d4edda,#c3e6cb); border-color:#28a745; color:#155724; animation:correctPulse .5s ease; }
+.option-btn.correct::after { content:'✓'; position:absolute; right:20px; top:50%; transform:translateY(-50%); font-size:24px; color:#28a745; font-weight:900; }
+.option-btn.wrong { background:linear-gradient(135deg,#f8d7da,#f5c6cb); border-color:#dc3545; color:#721c24; animation:shake .4s ease; }
+.option-btn.wrong::after { content:'✕'; position:absolute; right:20px; top:50%; transform:translateY(-50%); font-size:24px; color:#dc3545; font-weight:900; }
+@keyframes correctPulse { 0%{transform:scale(1);} 50%{transform:scale(1.03);} 100%{transform:scale(1);} }
+@keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-8px);} 75%{transform:translateX(8px);} }
+.explanation { display:none; margin-top:22px; padding:22px; background:linear-gradient(135deg,var(--explanation-bg-1),var(--explanation-bg-2)); border-left:5px solid #ffc107; border-radius:14px; box-shadow:0 4px 15px rgba(255,193,7,.15); transition:background .5s ease; }
+.explanation.show { display:block; animation:slideDown .4s ease; }
+@keyframes slideDown { from{opacity:0;transform:translateY(-15px);} to{opacity:1;transform:translateY(0);} }
+.explanation-header { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.explanation-icon { font-size:22px; }
+.explanation h3 { color:#856404; font-size:16px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; }
+[data-theme="dark"] .explanation h3 { color:#ffc107; }
+.explanation p { color:var(--text-mid); line-height:1.65; font-size:15px; transition:color .5s ease; }
+.next-btn { display:none; width:100%; padding:18px; margin-top:22px; background:linear-gradient(135deg,#7b2ff7,#00d4ff); color:#fff; border:none; border-radius:14px; font-size:17px; font-weight:800; cursor:pointer; transition:all .3s ease; font-family:inherit; box-shadow:0 8px 25px rgba(123,47,247,.35); align-items:center; justify-content:center; gap:10px; }
+.next-btn.show { display:flex; }
+.next-btn:hover { transform:translateY(-3px); box-shadow:0 15px 40px rgba(123,47,247,.5); }
+.arrow { transition:transform .3s; }
+.next-btn:hover .arrow { transform:translateX(6px); }
+.result-hero { text-align:center; margin-bottom:30px; }
+.result-emoji { font-size:70px; margin-bottom:10px; animation:bounce 1s ease infinite alternate; }
+@keyframes bounce { from{transform:translateY(0);} to{transform:translateY(-10px);} }
+.result-hero h1 { font-size:26px; margin-bottom:20px; }
+.score-display { display:flex; justify-content:center; align-items:baseline; gap:10px; margin:20px 0; font-weight:900; }
+.score-num { font-size:90px; background:linear-gradient(135deg,#00d4ff,#7b2ff7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1; }
+.score-divider { font-size:50px; color:#ccc; }
+.score-total { font-size:50px; color:#999; }
+.result-message { font-size:16px; color:var(--text-mid); line-height:1.6; padding:20px 25px; background:linear-gradient(135deg,var(--question-bg-1),var(--question-bg-2)); border-radius:16px; font-weight:600; margin-top:15px; transition:all .5s ease; }
+.result-actions { display:flex; justify-content:center; margin-bottom:20px; }
+.cert-btn { display:flex; align-items:center; gap:10px; padding:16px 32px; background:linear-gradient(135deg,#f093fb,#f5576c); color:#fff; border:none; border-radius:14px; font-size:16px; font-weight:800; cursor:pointer; font-family:inherit; box-shadow:0 8px 25px rgba(245,87,108,.4); transition:all .3s; }
+.cert-btn:hover { transform:translateY(-3px); box-shadow:0 15px 40px rgba(245,87,108,.5); }
+.memo { background:linear-gradient(135deg,var(--memo-bg-1),var(--memo-bg-2)); border-radius:20px; padding:28px; margin-bottom:25px; border:2px solid var(--input-border); transition:all .5s ease; }
+.memo-header { display:flex; align-items:center; gap:12px; margin-bottom:20px; padding-bottom:15px; border-bottom:2px dashed #c5cae9; }
+.memo-icon { font-size:28px; }
+.memo h2 { color:var(--text-main); font-size:19px; font-weight:800; transition:color .5s ease; }
+.memo-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.memo-item { background:var(--card-bg); padding:16px; border-radius:14px; border-left:5px solid #7b2ff7; transition:all .3s; box-shadow:0 2px 8px rgba(0,0,0,.05); }
+.memo-item:hover { transform:translateY(-3px); box-shadow:0 8px 20px rgba(123,47,247,.15); }
+.memo-phishing{border-left-color:#f5576c;} .memo-passwords{border-left-color:#4facfe;}
+.memo-social{border-left-color:#43e97b;} .memo-wifi{border-left-color:#fa709a;}
+.memo-family{border-left-color:#fee140;} .memo-2fa{border-left-color:#7b2ff7;}
+.memo-emoji { font-size:24px; margin-bottom:6px; }
+.memo-item h3 { color:var(--text-main); font-size:15px; font-weight:800; margin-bottom:6px; transition:color .5s ease; }
+.memo-item p { color:var(--text-soft); font-size:13.5px; line-height:1.5; transition:color .5s ease; }
+.restart-btn { display:flex; align-items:center; justify-content:center; gap:10px; width:100%; padding:18px; background:linear-gradient(135deg,#43e97b,#38f9d7); color:#0f0c29; border:none; border-radius:14px; font-size:17px; font-weight:800; cursor:pointer; font-family:inherit; box-shadow:0 8px 25px rgba(67,233,123,.4); transition:all .3s; }
+.restart-btn:hover { transform:translateY(-3px); box-shadow:0 15px 40px rgba(67,233,123,.6); }
+.certificate { background:#fff; border-radius:20px; padding:10px; margin-bottom:25px; box-shadow:0 10px 40px rgba(0,0,0,.2); }
+.cert-border { border:4px double #7b2ff7; border-radius:14px; padding:35px 25px; text-align:center; background:linear-gradient(135deg,#fff 0%,#f8faff 100%); }
+.cert-seal { font-size:50px; margin-bottom:10px; animation:shieldPulse 3s ease-in-out infinite; }
+.cert-title { font-size:32px; font-weight:900; letter-spacing:4px; background:linear-gradient(135deg,#00d4ff,#7b2ff7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:8px; }
+.cert-subtitle { color:#888; font-size:13px; text-transform:uppercase; letter-spacing:2px; margin-bottom:15px; }
+.cert-name-input { display:block; width:80%; margin:0 auto 20px; padding:12px 16px; font-size:22px; font-weight:700; font-family:inherit; text-align:center; color:#0f0c29; background:#f8faff; border:2px dashed #7b2ff7; border-radius:10px; outline:none; transition:all .3s; }
+.cert-name-input:focus { border-style:solid; background:#eef2ff; box-shadow:0 0 0 4px rgba(123,47,247,.15); }
+.cert-text { font-size:16px; color:#555; line-height:1.6; margin-bottom:20px; }
+.cert-text strong { color:#0f0c29; }
+.cert-score { font-size:18px; color:#302b63; margin-bottom:15px; padding:12px; background:linear-gradient(135deg,#f8faff,#eef2ff); border-radius:10px; font-weight:600; }
+.cert-score strong { font-size:22px; color:#7b2ff7; }
+.cert-date { font-size:13px; color:#999; margin-bottom:25px; }
+.cert-footer { margin-top:20px; padding-top:20px; }
+.cert-line { width:60%; height:1px; background:#ccc; margin:0 auto 8px; }
+.cert-sign { font-size:12px; color:#999; font-style:italic; }
+.cert-actions { display:flex; gap:12px; flex-direction:column; }
+.cert-print-btn, .cert-back-btn { display:flex; align-items:center; justify-content:center; gap:10px; width:100%; padding:16px; border:none; border-radius:14px; font-size:16px; font-weight:800; cursor:pointer; font-family:inherit; transition:all .3s; }
+.cert-print-btn { background:linear-gradient(135deg,#4facfe,#00f2fe); color:#fff; box-shadow:0 8px 25px rgba(79,172,254,.4); }
+.cert-print-btn:hover { transform:translateY(-3px); box-shadow:0 15px 40px rgba(79,172,254,.6); }
+.cert-back-btn { background:var(--input-bg); color:var(--text-mid); border:2px solid var(--input-border); }
+.cert-back-btn:hover { background:var(--question-bg-2); }
+@media print {
+  body * { visibility:hidden; }
+  #certificate, #certificate * { visibility:visible; }
+  #certificate { position:absolute; left:0; top:0; width:100%; box-shadow:none; }
+  .theme-toggle, .cert-actions, .bg-bubbles { display:none !important; }
+}
+@media (max-width:600px) {
+  .screen { padding:28px 22px; }
+  h1 { font-size:24px; }
+  .shield-animation { width:80px; height:96px; }
+  .category-grid { grid-template-columns:1fr; }
+  .cat-all { grid-column:span 1; }
+  .info-cards { grid-template-columns:1fr; }
+  .question-text { font-size:17px; }
+  .question-card { padding:18px; }
+  .option-btn { padding:15px 18px; font-size:14.5px; }
+  .score-num { font-size:64px; }
+  .score-total, .score-divider { font-size:36px; }
+  .memo-grid { grid-template-columns:1fr; }
+  .result-emoji { font-size:56px; }
+  .cert-title { font-size:24px; }
+  .cert-name-input { width:100%; font-size:18px; }
+  .theme-toggle { width:44px; height:44px; font-size:18px; }
+}
+</style>
+</head>
+<body>
+<div class="bg-bubbles">
+  <span></span><span></span><span></span><span></span><span></span>
+  <span></span><span></span><span></span><span></span><span></span>
+</div>
+
+<button class="theme-toggle" id="themeToggle" title="Переключить тему">
+  <span id="themeIcon">🌙</span>
+</button>
+
+<div class="container" id="app">
+  <!-- СТАРТ -->
+  <div id="startScreen" class="screen active">
+    <div class="hero">
+      <div class="shield-animation">
+        <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#00d4ff"/>
+              <stop offset="100%" stop-color="#7b2ff7"/>
+            </linearGradient>
+          </defs>
+          <path d="M50 5 L90 20 L90 60 Q90 100 50 115 Q10 100 10 60 L10 20 Z" fill="url(#shieldGrad)" stroke="#fff" stroke-width="2"/>
+          <path d="M35 60 L45 70 L68 45" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h1>Кибербезопасность<br><span class="gradient-text">для своих</span></h1>
+      <p class="subtitle">Проверь, сможешь ли ты защитить себя и близких от цифровых угроз</p>
+    </div>
+
+    <div class="categories">
+      <h2>🎯 Выбери категорию</h2>
+      <div class="category-grid">
+        <button class="category-btn cat-all" data-category="all">
+          <span class="cat-icon">🎲</span>
+          <span class="cat-name">Все вопросы</span>
+          <span class="cat-count">13 вопросов</span>
+        </button>
+        <button class="category-btn cat-phishing" data-category="phishing">
+          <span class="cat-icon">🎣</span>
+          <span class="cat-name">Фишинг</span>
+          <span class="cat-count">Мошенничество</span>
+        </button>
+        <button class="category-btn cat-passwords" data-category="passwords">
+          <span class="cat-icon">🔐</span>
+          <span class="cat-name">Пароли</span>
+          <span class="cat-count">Аккаунты</span>
+        </button>
+        <button class="category-btn cat-social" data-category="social">
+          <span class="cat-icon">📱</span>
+          <span class="cat-name">Соцсети</span>
+          <span class="cat-count">Личные данные</span>
+        </button>
+        <button class="category-btn cat-basics" data-category="basics">
+          <span class="cat-icon">📚</span>
+          <span class="cat-name">Общие правила</span>
+          <span class="cat-count">Основы</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="info-cards">
+      <div class="info-card"><span class="info-icon">⏱️</span><p>30 секунд на вопрос</p></div>
+      <div class="info-card"><span class="info-icon">💡</span><p>Объяснение после ответа</p></div>
+      <div class="info-card"><span class="info-icon">📜</span><p>Сертификат в конце</p></div>
+    </div>
+  </div>
+
+  <!-- ВИКТОРИНА -->
+  <div id="quizScreen" class="screen">
+    <div class="quiz-header">
+      <div class="progress-info"><span id="questionCounter">Вопрос 1 из 5</span></div>
+      <div class="timer-box" id="timerBox">
+        <span class="timer-icon">⏱</span>
+        <span id="timer">30</span>
+        <span class="timer-label">сек</span>
+      </div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="question-card"><div class="question-text" id="questionText"></div></div>
+    <div class="options" id="optionsContainer"></div>
+    <div class="explanation" id="explanationBox">
+      <div class="explanation-header">
+        <span class="explanation-icon">💡</span>
+        <h3>Объяснение</h3>
+      </div>
+      <p id="explanationText"></p>
+    </div>
+    <button class="next-btn" id="nextBtn">Следующий вопрос <span class="arrow">→</span></button>
+  </div>
+
+  <!-- РЕЗУЛЬТАТ -->
+  <div id="resultScreen" class="screen">
+    <div class="result-hero">
+      <div class="result-emoji" id="resultEmoji">🏆</div>
+      <h1>Твой результат</h1>
+      <div class="score-display">
+        <span id="scoreValue" class="score-num">0</span>
+        <span class="score-divider">/</span>
+        <span id="scoreTotal" class="score-total">5</span>
+      </div>
+      <p class="result-message" id="resultMessage"></p>
+    </div>
+
+    <div class="result-actions">
+      <button class="cert-btn" id="certBtn"><span>📜</span> Получить сертификат</button>
+    </div>
+
+    <div class="memo" id="memoBox">
+      <div class="memo-header">
+        <span class="memo-icon">📋</span>
+        <h2>Памятка «Простые правила»</h2>
+      </div>
+      <div class="memo-grid">
+        <div class="memo-item memo-phishing"><div class="memo-emoji">🎣</div><h3>Фишинг</h3><p>Банк никогда не просит данные карты по ссылке из SMS. Позвони по официальному номеру.</p></div>
+        <div class="memo-item memo-passwords"><div class="memo-emoji">🔐</div><h3>Пароли</h3><p>Для каждого сервиса — свой пароль. Используй менеджер паролей и 2FA.</p></div>
+        <div class="memo-item memo-social"><div class="memo-emoji">📱</div><h3>Соцсети</h3><p>Не публикуй номер телефона, адрес и геолокацию. Настрой приватность.</p></div>
+        <div class="memo-item memo-wifi"><div class="memo-emoji">📶</div><h3>Wi-Fi</h3><p>Не заходи в банк через открытый Wi-Fi. Используй мобильный интернет.</p></div>
+        <div class="memo-item memo-family"><div class="memo-emoji">👨‍👩‍👧</div><h3>Близкие</h3><p>Предупреди бабушек и дедушек: «Код из SMS — никому!»</p></div>
+        <div class="memo-item memo-2fa"><div class="memo-emoji">🛡️</div><h3>2FA</h3><p>Включи двухфакторную аутентификацию везде, где можно.</p></div>
+      </div>
+    </div>
+
+    <button class="restart-btn" id="restartBtn"><span>🔄</span> Пройти ещё раз</button>
+  </div>
+
+  <!-- СЕРТИФИКАТ -->
+  <div id="certScreen" class="screen">
+    <div class="certificate" id="certificate">
+      <div class="cert-border">
+        <div class="cert-seal">🛡️</div>
+        <div class="cert-title">СЕРТИФИКАТ</div>
+        <div class="cert-subtitle">подтверждает, что</div>
+        <input type="text" class="cert-name-input" id="certName" placeholder="Введи своё имя" maxlength="30">
+        <div class="cert-text">
+          успешно прошёл(ла) викторину по<br>
+          <strong>«Кибербезопасность для своих»</strong>
+        </div>
+        <div class="cert-score">
+          Результат: <strong><span id="certScore">0</span> из <span id="certTotal">5</span></strong>
+          (<span id="certPercent">0</span>%)
+        </div>
+        <div class="cert-date" id="certDate"></div>
+        <div class="cert-footer">
+          <div class="cert-line"></div>
+          <div class="cert-sign">Проект «Кибербезопасность для своих»</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cert-actions">
+      <button class="cert-print-btn" id="certPrintBtn"><span>🖨️</span> Сохранить / Распечатать</button>
+      <button class="cert-back-btn" id="certBackBtn"><span>←</span> Назад к результату</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// МАССИВ ВОПРОСОВ
+// ============================================================
+const questions = [
+  { category:"phishing", question:"Тебе пришло SMS: «Ваш аккаунт в банке заблокирован. Перейдите по ссылке и подтвердите данные». Что делать?",
+    options:[
+      {text:"Перейти по ссылке и ввести данные",correct:false,explanation:"Это классический фишинг. Ссылка ведёт на поддельный сайт. Введя данные, ты передашь их мошенникам. Банк никогда не просит подтвердить данные по ссылке из SMS."},
+      {text:"Позвонить в банк по номеру с официального сайта",correct:true,explanation:"Верно. Официальный номер банка указан на обратной стороне карты или на сайте. Так ты проверишь, действительно ли есть проблема."},
+      {text:"Удалить сообщение и никому не говорить",correct:false,explanation:"Удалить — безопасно, но лучше сообщить в банк и предупредить близких."},
+      {text:"Ответить на SMS и спросить, что случилось",correct:false,explanation:"Ответив, ты подтвердишь, что номер активен. Мошенники поймут, что ты потенциальная жертва."}
+    ]},
+  { category:"phishing", question:"Бабушке позвонили «из банка» и попросили назвать код из SMS. Что ей делать?",
+    options:[
+      {text:"Назвать код, ведь звонят из банка",correct:false,explanation:"Сотрудник банка НИКОГДА не спрашивает код из SMS. Этот код — ключ к деньгам. Назвав его, ты отдашь мошенникам доступ к счёту."},
+      {text:"Положить трубку и перезвонить в банк по официальному номеру",correct:true,explanation:"Верно. Положи трубку и перезвони в банк сам — по номеру с карты или сайта."},
+      {text:"Назвать код, но только если звонящий знает её имя",correct:false,explanation:"Мошенники часто знают имя и даже последние цифры карты."},
+      {text:"Записать код и отправить его в SMS",correct:false,explanation:"Никогда не передавай коды из SMS никому."}
+    ]},
+  { category:"phishing", question:"На почту пришло письмо от «Госуслуг»: «Ваш аккаунт будет удалён через 24 часа. Подтвердите вход по ссылке». Что делать?",
+    options:[
+      {text:"Перейти по ссылке и войти в аккаунт",correct:false,explanation:"Это фишинг. Настоящие Госуслуги не рассылают такие письма."},
+      {text:"Открыть Госуслуги вручную — через браузер или приложение",correct:true,explanation:"Верно. Никогда не переходи по ссылкам из подозрительных писем."},
+      {text:"Ответить на письмо и спросить, что случилось",correct:false,explanation:"Ответив, ты подтвердишь, что адрес активен."},
+      {text:"Переслать письмо друзьям, чтобы предупредить",correct:false,explanation:"Предупредить — полезно, но сначала не переходи по ссылке."}
+    ]},
+  { category:"passwords", question:"Можно ли использовать один пароль для почты, соцсетей и онлайн-банка?",
+    options:[
+      {text:"Да, так удобнее запомнить",correct:false,explanation:"Если один сайт взломают, мошенники попробуют тот же пароль везде."},
+      {text:"Нет, потому что при утечке одного сервиса злоумышленники получат доступ ко всем",correct:true,explanation:"Верно. Для каждого важного сервиса нужен свой уникальный пароль."},
+      {text:"Можно, если пароль длинный",correct:false,explanation:"Если пароль украли — неважно, какой он был длины."},
+      {text:"Можно, если включена двухфакторная аутентификация",correct:false,explanation:"2FA помогает, но не отменяет риск."}
+    ]},
+  { category:"passwords", question:"Что делать, если ты понял, что твой аккаунт взломали?",
+    options:[
+      {text:"Ничего, само пройдёт",correct:false,explanation:"Пока ты бездействуешь, мошенники читают твои сообщения и рассылают спам от твоего имени."},
+      {text:"Сменить пароль, включить 2FA, проверить устройства и сообщить в поддержку",correct:true,explanation:"Верно. Это полный алгоритм действий."},
+      {text:"Удалить аккаунт",correct:false,explanation:"Удаление не вернёт контроль и не остановит мошенников."},
+      {text:"Написать друзьям, чтобы они тоже сменили пароль",correct:false,explanation:"Предупредить полезно, но это не заменяет смену пароля."}
+    ]},
+  { category:"passwords", question:"Какой пароль самый надёжный?",
+    options:[
+      {text:"Дата рождения",correct:false,explanation:"Даты рождения легко узнать из соцсетей и подобрать."},
+      {text:"123456",correct:false,explanation:"Это самый популярный пароль в мире. Его взломают за секунду."},
+      {text:"Длинная фраза с цифрами и символами, например «МойКотСъел5Рыб!»",correct:true,explanation:"Верно. Длинные фразы с цифрами и символами надёжнее коротких."},
+      {text:"Имя питомца",correct:false,explanation:"Имена питомцев часто указаны в соцсетях."}
+    ]},
+  { category:"social", question:"Какие данные НЕ стоит публиковать в открытом доступе в соцсетях?",
+    options:[
+      {text:"Фото еды",correct:false,explanation:"Фото еды не содержит личной информации."},
+      {text:"Номер телефона и домашний адрес",correct:true,explanation:"Верно. Это персональные данные, которые мошенники могут использовать."},
+      {text:"Мемы про котов",correct:false,explanation:"Мемы безопасны."},
+      {text:"Погоду за окном",correct:false,explanation:"Погода — общедоступная информация."}
+    ]},
+  { category:"social", question:"Незнакомец в соцсетях просит прислать фото твоего паспорта «для проверки». Что делать?",
+    options:[
+      {text:"Отправить — может, это важно",correct:false,explanation:"Фото паспорта — это ключ к твоей личности."},
+      {text:"Заблокировать и сообщить о мошенничестве",correct:true,explanation:"Верно. Незнакомцы не должны просить документы."},
+      {text:"Отправить, но замазать номер",correct:false,explanation:"Даже частичное фото паспорта может быть использовано."},
+      {text:"Спросить, зачем ему это",correct:false,explanation:"Спрашивать бесполезно — мошенник придумает историю."}
+    ]},
+  { category:"social", question:"Что безопаснее для личных фото?",
+    options:[
+      {text:"Публиковать всё открыто — так интереснее",correct:false,explanation:"Открытые фото может увидеть любой, включая мошенников."},
+      {text:"Настроить приватность и делиться только с друзьями",correct:true,explanation:"Верно. Настрой приватность."},
+      {text:"Публиковать с геолокацией — пусть все знают, где ты",correct:false,explanation:"Геолокация показывает, где ты находишься прямо сейчас."},
+      {text:"Отправлять фото всем, кто попросит",correct:false,explanation:"Никогда не отправляй личные фото незнакомцам."}
+    ]},
+  { category:"basics", question:"Ты в кафе и хочешь зайти в онлайн-банк. Есть открытый Wi-Fi без пароля. Что делать?",
+    options:[
+      {text:"Зайти в банк — это удобно",correct:false,explanation:"Открытый Wi-Fi не шифрует трафик."},
+      {text:"Использовать мобильный интернет или подождать до дома",correct:true,explanation:"Верно. Мобильный интернет защищён лучше."},
+      {text:"Зайти, но быстро",correct:false,explanation:"Скорость не защищает."},
+      {text:"Зайти, если сайт банка начинается с https",correct:false,explanation:"В открытой сети злоумышленник может перенаправить тебя на фишинговый сайт."}
+    ]},
+  { category:"basics", question:"Что такое двухфакторная аутентификация?",
+    options:[
+      {text:"Когда нужно ввести два пароля",correct:false,explanation:"Второй фактор — это не пароль."},
+      {text:"Когда кроме пароля нужен второй способ подтверждения (код из SMS, приложение)",correct:true,explanation:"Верно. Это одна из самых эффективных защит."},
+      {text:"Когда пароль нужно менять каждые 2 дня",correct:false,explanation:"Это не 2FA."},
+      {text:"Когда пароль состоит из двух слов",correct:false,explanation:"Это просто длинный пароль."}
+    ]},
+  { category:"basics", question:"Пришло уведомление: «Обновление банковского приложения. Скачайте по ссылке». Что делать?",
+    options:[
+      {text:"Скачать по ссылке",correct:false,explanation:"Это фишинг. Обновления приходят через официальный магазин."},
+      {text:"Обновить приложение через официальный магазин",correct:true,explanation:"Верно. Только через Google Play, App Store, RuStore."},
+      {text:"Удалить приложение банка",correct:false,explanation:"Удалять не нужно."},
+      {text:"Переслать ссылку друзьям",correct:false,explanation:"Не пересылай подозрительные ссылки."}
+    ]}
+];
+
+// ============================================================
+// СОСТОЯНИЕ
+// ============================================================
+let currentQuestion = 0, score = 0, timerInterval = null, timeLeft = 30;
+let activeQuestions = [], answered = false;
+
+// ============================================================
+// ЭЛЕМЕНТЫ
+// ============================================================
+const startScreen = document.getElementById('startScreen');
+const quizScreen = document.getElementById('quizScreen');
+const resultScreen = document.getElementById('resultScreen');
+const certScreen = document.getElementById('certScreen');
+const questionCounter = document.getElementById('questionCounter');
+const timerElement = document.getElementById('timer');
+const timerBox = document.getElementById('timerBox');
+const progressFill = document.getElementById('progressFill');
+const questionText = document.getElementById('questionText');
+const optionsContainer = document.getElementById('optionsContainer');
+const explanationBox = document.getElementById('explanationBox');
+const explanationText = document.getElementById('explanationText');
+const nextBtn = document.getElementById('nextBtn');
+const scoreValue = document.getElementById('scoreValue');
+const scoreTotal = document.getElementById('scoreTotal');
+const resultMessage = document.getElementById('resultMessage');
+const resultEmoji = document.getElementById('resultEmoji');
+const restartBtn = document.getElementById('restartBtn');
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+const certBtn = document.getElementById('certBtn');
+const certName = document.getElementById('certName');
+const certScore = document.getElementById('certScore');
+const certTotal = document.getElementById('certTotal');
+const certPercent = document.getElementById('certPercent');
+const certDate = document.getElementById('certDate');
+const certPrintBtn = document.getElementById('certPrintBtn');
+const certBackBtn = document.getElementById('certBackBtn');
+
+// ============================================================
+// ТЁМНАЯ ТЕМА
+// ============================================================
+function initTheme() {
+  const saved = localStorage.getItem('quizTheme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  themeIcon.textContent = saved === 'dark' ? '☀️' : '🌙';
+}
+themeToggle.addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  themeIcon.textContent = next === 'dark' ? '☀️' : '🌙';
+  localStorage.setItem('quizTheme', next);
+});
+initTheme();
+
+// ============================================================
+// ЗВУКИ
+// ============================================================
+let audioCtx = null;
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+function playCorrect() {
+  try {
+    const ctx = getAudioCtx(), now = ctx.currentTime;
+    [523.25, 659.25, 783.99].forEach((freq, i) => {
+      const osc = ctx.createOscillator(), gain = ctx.createGain();
+      osc.type = 'sine'; osc.frequency.value = freq;
+      osc.connect(gain); gain.connect(ctx.destination);
+      gain.gain.setValueAtTime(0.15, now + i * 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.1 + 0.2);
+      osc.start(now + i * 0.1); osc.stop(now + i * 0.1 + 0.2);
+    });
+  } catch (e) {}
+}
+function playWrong() {
+  try {
+    const ctx = getAudioCtx(), now = ctx.currentTime;
+    const osc = ctx.createOscillator(), gain = ctx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(300, now);
+    osc.frequency.exponentialRampToValueAtTime(120, now + 0.4);
+    osc.connect(gain); gain.connect(ctx.destination);
+    gain.gain.setValueAtTime(0.15, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+    osc.start(now); osc.stop(now + 0.4);
+  } catch (e) {}
+}
+function playFinish() {
+  try {
+    const ctx = getAudioCtx(), now = ctx.currentTime;
+    [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
+      const osc = ctx.createOscillator(), gain = ctx.createGain();
+      osc.type = 'triangle'; osc.frequency.value = freq;
+      osc.connect(gain); gain.connect(ctx.destination);
+      gain.gain.setValueAtTime(0.15, now + i * 0.15);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.15 + 0.3);
+      osc.start(now + i * 0.15); osc.stop(now + i * 0.15 + 0.3);
+    });
+  } catch (e) {}
+}
+
+// ============================================================
+// ЭКРАНЫ
+// ============================================================
+function showScreen(screen) {
+  [startScreen, quizScreen, resultScreen, certScreen].forEach(s => s.classList.remove('active'));
+  screen.classList.add('active');
+}
+
+// ============================================================
+// СТАРТ
+// ============================================================
+function startQuiz(category) {
+  activeQuestions = category === 'all' ? [...questions] : questions.filter(q => q.category === category);
+  currentQuestion = 0; score = 0;
+  showScreen(quizScreen);
+  loadQuestion();
+}
+
+// ============================================================
+// ВОПРОС
+// ============================================================
+function loadQuestion() {
+  answered = false;
+  const q = activeQuestions[currentQuestion];
+  questionCounter.textContent = `Вопрос ${currentQuestion + 1} из ${activeQuestions.length}`;
+  progressFill.style.width = (currentQuestion / activeQuestions.length) * 100 + '%';
+  questionText.textContent = q.question;
+
+  optionsContainer.innerHTML = '';
+  q.options.forEach((option, index) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = option.text;
+    btn.addEventListener('click', () => selectAnswer(index));
+    optionsContainer.appendChild(btn);
+  });
+
+  explanationBox.classList.remove('show');
+  nextBtn.classList.remove('show');
+  startTimer();
+}
+
+// ============================================================
+// ТАЙМЕР
+// ============================================================
+function startTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  timeLeft = 30;
+  timerElement.textContent = timeLeft;
+  timerBox.classList.remove('warning');
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    timerElement.textContent = timeLeft;
+    if (timeLeft <= 10) timerBox.classList.add('warning');
+    if (timeLeft <= 0) { clearInterval(timerInterval); timeUp(); }
+  }, 1000);
+}
+function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
+
+function timeUp() {
+  if (answered) return;
+  answered = true;
+  const q = activeQuestions[currentQuestion];
+  const buttons = optionsContainer.querySelectorAll('.option-btn');
+  buttons.forEach((btn, index) => {
+    btn.disabled = true;
+    if (q.options[index].correct) btn.classList.add('correct');
+  });
+  const correctOption = q.options.find(o => o.correct);
+  explanationText.textContent = "⏰ Время вышло! " + correctOption.explanation;
+  explanationBox.classList.add('show');
+  nextBtn.classList.add('show');
+  playWrong();
+}
+
+// ============================================================
+// ОТВЕТ
+// ============================================================
+function selectAnswer(index) {
+  if (answered) return;
+  answered = true;
+  stopTimer();
+  const q = activeQuestions[currentQuestion];
+  const buttons = optionsContainer.querySelectorAll('.option-btn');
+
+  buttons.forEach((btn, i) => {
+    btn.disabled = true;
+    if (q.options[i].correct) btn.classList.add('correct');
+    if (i === index && !q.options[i].correct) btn.classList.add('wrong');
+  });
+
+  if (q.options[index].correct) { score++; playCorrect(); } else { playWrong(); }
+
+  explanationText.textContent = q.options[index].explanation;
+  explanationBox.classList.add('show');
+  nextBtn.classList.add('show');
+}
+
+// ============================================================
+// ДАЛЬШЕ
+// ============================================================
+function nextQuestion() {
+  currentQuestion++;
+  if (currentQuestion >= activeQuestions.length) showResult();
+  else loadQuestion();
+}
+
+// ============================================================
+// РЕЗУЛЬТАТ
+// ============================================================
+function showResult() {
+  stopTimer();
+  showScreen(resultScreen);
+  scoreValue.textContent = score;
+  scoreTotal.textContent = activeQuestions.length;
+
+  const percent = (score / activeQuestions.length) * 100;
+  let message = '', emoji = '🏆';
+  if (percent >= 90) { message = 'Отлично! Ты можешь защитить себя и близких.'; emoji = '🏆'; }
+  else if (percent >= 60) { message = 'Хорошо, но есть пробелы. Просмотри памятку.'; emoji = '👍'; }
+  else if (percent >= 30) { message = 'Стоит серьёзно повторить правила. Начни с памятки.'; emoji = '⚠️'; }
+  else { message = 'Высокий риск! Обязательно изучи памятку.'; emoji = '🚨'; }
+
+  resultMessage.textContent = message;
+  resultEmoji.textContent = emoji;
+  playFinish();
+}
+
+// ============================================================
+// СЕРТИФИКАТ
+// ============================================================
+function openCertificate() {
+  certScore.textContent = score;
+  certTotal.textContent = activeQuestions.length;
+  certPercent.textContent = Math.round((score / activeQuestions.length) * 100);
+
+  const today = new Date();
+  const options = { day: 'numeric', month: 'long', year: 'numeric' };
+  certDate.textContent = 'Дата: ' + today.toLocaleDateString('ru-RU', options);
+
+  const savedName = localStorage.getItem('quizName');
+  if (savedName) certName.value = savedName;
+
+  showScreen(certScreen);
+}
+
+certBtn.addEventListener('click', openCertificate);
+certName.addEventListener('input', () => localStorage.setItem('quizName', certName.value));
+certPrintBtn.addEventListener('click', () => window.print());
+certBackBtn.addEventListener('click', () => showScreen(resultScreen));
+
+// ============================================================
+// ПЕРЕЗАПУСК И ОБРАБОТЧИКИ
+// ============================================================
+function restartQuiz() { stopTimer(); showScreen(startScreen); }
+
+document.querySelectorAll('.category-btn').forEach(btn => {
+  btn.addEventListener('click', () => startQuiz(btn.dataset.category));
+});
+
+nextBtn.addEventListener('click', nextQuestion);
+restartBtn.addEventListener('click', restartQuiz);
+</script>
+</body>
+</html>
